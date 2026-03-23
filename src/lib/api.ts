@@ -2,18 +2,18 @@ import axios from 'axios'
 
 const API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-  timeout: 30000, // 30 seconds — inference only, no training
+  timeout: 30000, // 30 seconds
 })
 
 export type Coin = 'BTC-USD' | 'ETH-USD'
 
-// ── Request ───────────────────────────────────────────────────────────────────
+// Request
 export interface ForecastRequest {
   ticker:        Coin
   forecast_days: number
 }
 
-// ── Responses ─────────────────────────────────────────────────────────────────
+//  Responses 
 export interface ForecastResponse {
   ticker: Coin
   historical: {
@@ -52,9 +52,8 @@ export interface HistoryResponse {
   ma365: (number | null)[]
 }
 
-// ── API calls ─────────────────────────────────────────────────────────────────
+// API calls
 export const api = {
-  health:      ()                          => API.get('/health'),
   ticker:      (symbol: Coin)              => API.get<TickerInfo>(`/ticker/${symbol}`),
   history:     (symbol: Coin, years = 5)   => API.get<HistoryResponse>(`/history/${symbol}?years=${years}`),
   forecast:    (req: ForecastRequest)      => API.post<ForecastResponse>('/forecast', req),

@@ -47,15 +47,13 @@ export default function Results({ data }: { data: ForecastResponse }) {
   const name    = coin === 'BTC-USD' ? 'Bitcoin' : 'Ethereum'
 
   const lastForecast  = data.forecast.prices.at(-1) ?? 0
-  const firstForecast = data.forecast.prices[0] ?? 0
   const currentPrice  = data.historical.prices.at(-1) ?? 0
-  const forecastChg   = ((lastForecast - currentPrice) / currentPrice * 100)
+  const forecastChg   = currentPrice !== 0 ? ((lastForecast - currentPrice) / currentPrice * 100) : 0
   const bullish       = forecastChg >= 0
 
   return (
     <div className="space-y-5 animate-fade-in">
 
-      {/* Header row */}
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <div className="flex items-center gap-3">
@@ -70,7 +68,6 @@ export default function Results({ data }: { data: ForecastResponse }) {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Trend badge */}
           <div
             className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold"
             style={{
@@ -84,7 +81,6 @@ export default function Results({ data }: { data: ForecastResponse }) {
             {bullish ? '+' : ''}{forecastChg.toFixed(2)}% over {data.forecast.dates.length}d
           </div>
 
-          {/* Export */}
           <button
             onClick={() => downloadCSV(data)}
             className="flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all"
@@ -103,7 +99,6 @@ export default function Results({ data }: { data: ForecastResponse }) {
         </div>
       </div>
 
-      {/* Key stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Stat label="Current Price"  value={`$${currentPrice.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}   color={color} />
         <Stat label={`Day ${data.forecast.dates.length} Target`} value={`$${lastForecast.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} color={bullish ? '#22d3a0' : '#f43f5e'} />
@@ -111,7 +106,6 @@ export default function Results({ data }: { data: ForecastResponse }) {
         <Stat label="RMSE"  value={`$${data.metrics.rmse.toLocaleString()}`} color="#a78bfa" />
       </div>
 
-      {/* History Chart */}
       <div
         className="rounded-2xl p-5"
         style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
@@ -120,13 +114,12 @@ export default function Results({ data }: { data: ForecastResponse }) {
           <div className="w-1.5 h-5 rounded-full" style={{ background: color }} />
           <span className="text-sm font-semibold" style={{ color: '#94a3b8' }}>Price History</span>
           <span className="ml-auto text-xs" style={{ color: '#334155', fontFamily: 'var(--font-mono)' }}>
-            + MA 100 · MA 365
+            Last 90 days
           </span>
         </div>
         <HistoryChart data={data.historical} coin={coin} />
       </div>
 
-      {/* Forecast Chart */}
       <div
         className="rounded-2xl p-5"
         style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
@@ -141,7 +134,6 @@ export default function Results({ data }: { data: ForecastResponse }) {
         <ForecastChart historical={data.historical} forecast={data.forecast} coin={coin} />
       </div>
 
-      {/* Prediction vs Actual + Table */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div
           className="rounded-2xl p-5"
@@ -154,7 +146,6 @@ export default function Results({ data }: { data: ForecastResponse }) {
           <PredictionChart data={data.test} coin={coin} />
         </div>
 
-        {/* Day-by-day table */}
         <div
           className="rounded-2xl p-5"
           style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
@@ -176,20 +167,15 @@ export default function Results({ data }: { data: ForecastResponse }) {
                 {data.forecast.dates.map((d, i) => {
                   const p    = data.forecast.prices[i]
                   const prev = i === 0 ? currentPrice : data.forecast.prices[i - 1]
-                  const chg  = (p - prev) / prev * 100
+                  const chg  = prev !== 0 ? (p - prev) / prev * 100 : 0
                   return (
-                    <tr
-                      key={d}
-                      style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}
-                    >
+                    <tr key={d} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                       <td className="py-2" style={{ color: '#475569' }}>{d}</td>
                       <td className="py-2 text-right" style={{ color: '#f1f5f9' }}>
                         ${p.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                       </td>
-                      <td
-                        className="py-2 text-right font-medium"
-                        style={{ color: chg >= 0 ? '#22d3a0' : '#f43f5e' }}
-                      >
+                      <td className="py-2 text-right font-medium"
+                        style={{ color: chg >= 0 ? '#22d3a0' : '#f43f5e' }}>
                         {chg >= 0 ? '▲' : '▼'} {Math.abs(chg).toFixed(2)}%
                       </td>
                     </tr>
