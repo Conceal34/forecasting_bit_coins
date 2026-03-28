@@ -114,9 +114,7 @@ This app is deployed on **Vercel**. To deploy your own instance:
 
 > Make sure backend has the correct `FRONTEND_URL` set in its own environment variables to allow CORS from your Vercel domain.
 
----
-
 ## Related
 
 - **Backend repo:** [btc-predict-backend](https://github.com/Conceal34/btc-predict-backend) — FastAPI + LSTM prediction engine
-````
+- 
