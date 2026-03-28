@@ -1,4 +1,4 @@
-# PriceOracle — Frontend
+# PriceOracle — BTC Predict Frontend
 
 The frontend for **PriceOracle**, a crypto price forecasting app. Built with Next.js 14 and TypeScript, it visualizes LSTM-based predictions for Bitcoin and Ethereum fetched from the [btc-predict-backend](https://github.com/Conceal34/btc-predict-backend).
 
